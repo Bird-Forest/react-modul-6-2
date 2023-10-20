@@ -31,8 +31,6 @@ const PostDetailsPage = lazy(() => import('pages/PostDetailPage'));
 
 */
 
-const posts = setPosts;
-
 export const App = () => {
   return (
     <StyledAppContainer>
