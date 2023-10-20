@@ -12,49 +12,44 @@ import { findPostById } from 'servise/api';
 import Loader from 'components/Loader';
 import ErrorMessage from 'components/Error';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  addPosts,
+  setError,
+  setisLoading,
+  setPostDetails,
+} from 'redux/postDetailsRedux';
 
 const CommentPage = lazy(() => import('pages/CommentPage'));
-
 export default function PostDetailPage() {
   const { postId } = useParams();
-
   const location = useLocation();
   console.log(location);
   const backLinkHref = useRef(location.state?.from ?? '/');
-
-  // const [postDetails, setPostDetails] = useState(null);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [error, setError] = useState(null);
   const postDetails = useSelector(state => state.postDetails.postDetailsData);
   const isLoading = useSelector(state => state.postDetails.isLoading);
   const error = useSelector(state => state.postDetails.error);
   const dispatch = useDispatch();
-
   useEffect(() => {
     if (!postId) return;
-
     const fetchAllPosts = async () => {
       try {
-        // setIsLoading(true);
-        dispatch({ type: 'postDetails / setIsLoading', payload: true });
+        dispatch(setisLoading(true));
         const postData = await findPostById(postId);
-        dispatch({ type: 'postDetails/setPostDetails', payload: postData });
-        // setPostDetails(postData);
+        dispatch(setPostDetails(postData));
       } catch (error) {
-        dispatch({ type: 'postDetails/setError', payload: error.message });
-        // setError(error.message);
+        dispatch(setError(error.message));
       } finally {
-        // setIsLoading(false);
-        dispatch({ type: 'postDetails / setIsLoading', payload: false });
+        dispatch(setisLoading(false));
       }
     };
-
     fetchAllPosts();
   }, [postId, dispatch]);
   return (
     <div>
       <Link to={backLinkHref.current}>Go Back</Link>
-
+      <button onClick={() => dispatch(addPosts({ title: '123', body: '123' }))}>
+        Click to add post to STATE
+      </button>
       {isLoading && <Loader />}
       {error && <ErrorMessage message={error} />}
       {postDetails !== null && (
